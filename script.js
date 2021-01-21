@@ -13,16 +13,6 @@ galleryListRef.addEventListener('click', getOriginalImage);
 closeModaleBtnRef.addEventListener('click', closeModaleWindow);
 modaleOverlayRef.addEventListener('click', closeModaleWindow);
 
-window.addEventListener('keydown', event => {
-  if (!modaleWindowRef.classList.contains('is-open')) return;
-
-  if (event.code === 'Escape') closeModaleWindow();
-
-  if (event.code === 'ArrowRight') pressRightModaleImage();
-
-  if (event.code === 'ArrowLeft') pressLeftModaleImage();
-});
-
 function addImages(array) {
   let dataIndex = 0;
   return array.reduce((acc, image) => {
@@ -36,7 +26,7 @@ function addImages(array) {
             src=${image.preview}
             data-source=${image.original}
             data-index=${dataIndex}
-            alt=${image.description}
+            alt="${image.description}"
           />
         </a>
       </li >`;
@@ -56,11 +46,23 @@ function getOriginalImage(event) {
   openModaleWindow(originalImage, altImage, dataIndex);
 }
 
+function keyDownModuleWindow(event) {
+  if (!modaleWindowRef.classList.contains('is-open')) return;
+
+  if (event.code === 'Escape') return closeModaleWindow();
+
+  if (event.code === 'ArrowRight') return pressRightModaleImage();
+
+  if (event.code === 'ArrowLeft') return pressLeftModaleImage();
+}
+
 function openModaleWindow(image, alt, index) {
   modaleWindowRef.classList.add('is-open');
   modaleImageRef.src = image;
   modaleImageRef.alt = alt;
   modaleImageRef.dataset.index = index;
+
+  window.addEventListener('keydown', event => keyDownModuleWindow(event));
 }
 
 function closeModaleWindow() {
@@ -68,6 +70,9 @@ function closeModaleWindow() {
   modaleImageRef.src = '';
   modaleImageRef.alt = '';
   delete modaleImageRef.dataset.index;
+  isModaleOpen = false;
+
+  window.removeEventListener('keydown', event => keyDownModuleWindow(event));
 }
 
 function pressRightModaleImage() {
